@@ -1,0 +1,30 @@
+{
+  "name": "react-audio",
+  "version": "0.0.1",
+  "description": "web audio api react components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lostclawz/react-audio.git"
+  },
+  "author": "Philip Kuperberg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lostclawz/react-audio/issues"
+  },
+  "homepage": "https://github.com/lostclawz/react-audio#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "classnames": "^2.2.6",
+    "enzyme": "^3.10.0",
+    "mocha": "^6.2.0",
+    "prop-types": "^15.7.2",
+    "ramda": "^0.26.1",
+    "react": "^16.8.6",
+    "sinon": "^7.3.2",
+    "uuid": "^3.3.2"
+  }
+}
