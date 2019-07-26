@@ -4,7 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 
 import { mount } from 'enzyme';
 import sinon from 'sinon';
-import * as audioUtils from '~/utils/web-audio-utils';
+import * as audioUtils from '../utils/web-audio-utils';
 import SoundPlayer from '../SoundPlayer';
 
 chai.use(chaiAsPromised);
