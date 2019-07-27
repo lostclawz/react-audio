@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import {
    UPDATE_PARAM, updater, removePlayer, REMOVE_PLAYER, updateParam
 } from '../SoundPlayerActions';
-import { testActionCreator } from './utils/testing-utils';
+import { testActionCreator } from '../utils/testing-utils';
 
 describe('SoundPlayerActions', () => {
    describe('updater', () => {
