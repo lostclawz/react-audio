@@ -1,0 +1,36 @@
+.btn-loop{
+   // @include icon-button("\f021");
+}
+.btn-play{
+   // @include icon-button("\f04b");
+   // &.playing{
+      // @include icon-button("\f04d");
+   // }
+   &.loading-file{
+      opacity: 0.5;
+      cursor: wait;
+   }
+}
+
+.sound-player{
+   display: flex;
+   flex-flow: row;
+   align-items: center;
+   justify-content: space-between;
+   // margin: 1rem;
+   background-color: rgba(0, 0, 0, 0.1);
+   padding: 0.5em;
+   // flex-grow: 1;
+   flex-basis: 600px;
+
+   & > * {
+      padding: 0.25em;
+   }
+   &.disabled {
+      cursor: not-allowed;
+      opacity: 0.25;
+      * {
+         cursor: not-allowed;
+      }
+   }
+}

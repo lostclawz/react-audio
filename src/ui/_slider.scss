@@ -1,0 +1,85 @@
+$slider-ball-size: 14px;
+$slider-ball-color: green;
+$slider-ball-color-focus: purple;
+$slider-track-color: gray;
+
+
+@mixin slider-track {
+   width: 100%;
+   background-color: rgba(black, 0.75);
+   height: 3px;
+   box-sizing: content-box;
+}
+@mixin slider-thumb {
+   -webkit-appearance: none;
+   border: none;
+   height: $slider-ball-size;
+   width: $slider-ball-size;
+   border-radius: 50%;
+   background: $slider-ball-color;
+   margin-top: -6px;
+   transition: all 0.1s ease;
+   position: relative;
+}
+
+.slider {
+   position: relative;
+   display: inline-block;
+   box-sizing: border-box;
+   margin: 0;
+   align-items: center;
+   $padding: 0.5rem;
+   padding: 0;
+
+   input[type=range] {
+      background: transparent;
+      -webkit-appearance: none;
+      border: none;
+      position: relative;
+      padding: $padding;
+      margin: 0;
+      padding-bottom: 0;
+      &:focus {
+         outline: none;
+         &::-moz-range-thumb { background: $slider-ball-color-focus; }
+         &::-webkit-slider-thumb {background: $slider-ball-color-focus; }
+      }
+      &::-webkit-slider-runnable-track { @include slider-track }
+      &::-moz-range-track { @include slider-track }
+      &::-ms-track { @include slider-track }
+
+      &::-moz-range-thumb { @include slider-thumb; }
+      &::-webkit-slider-thumb { @include slider-thumb; }
+      &:-moz-focusring {
+         outline: 1px solid white;
+         outline-offset: -1px;
+      }
+   }
+   .label-value {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 $padding;
+   }
+
+   .ticks {
+      $size: 11px;
+      display: flex;
+      flex-flow: row;
+      position: relative;
+      justify-content: space-between;
+      // flex-basis: 80%;
+      // width: 89%;
+      padding: 0 calc(#{$padding} + #{$slider-ball-size / 2});
+      // padding: 0 $padding;
+      transform: translateY(#{-$size + 2});
+      z-index: -1;
+      height: $size;
+      .tick {
+         height: #{$size};
+         background-color: black;
+         width: 1px;
+      }
+   }
+}
