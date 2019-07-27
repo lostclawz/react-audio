@@ -11,7 +11,7 @@ const Slider = ({
    showValue = false,
    valueUnits = '',
    label,
-   inputProps,
+   inputProps = {},
    defaultValue,
    ...props
 }) => (
