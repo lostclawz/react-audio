@@ -15,7 +15,7 @@ const Button = ({
          onClick(passback);
       }}
       onKeyDown={(e) => {
-         if (e.key === 13 || e.key === 10) {
+         if (e.keyCode === 13 || e.keyCode === 10) {
             onClick(passback);
             e.preventDefault();
             e.stopPropagation();
