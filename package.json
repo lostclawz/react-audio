@@ -19,12 +19,12 @@
   "dependencies": {
     "chai": "^4.2.0",
     "classnames": "^2.2.6",
-    "enzyme": "^3.10.0",
-    "mocha": "^6.2.0",
+    "enzyme": "^3.11.0",
+    "mocha": "^6.2.3",
     "prop-types": "^15.7.2",
     "ramda": "^0.26.1",
-    "react": "^16.8.6",
-    "sinon": "^7.3.2",
-    "uuid": "^3.3.2"
+    "react": "^16.13.1",
+    "sinon": "^7.5.0",
+    "uuid": "^3.4.0"
   }
 }
