@@ -1,14 +1,13 @@
 import React, {
-   useCallback, useState, useContext
+   useCallback, useState, useContext, useId
 } from 'react';
 import SoundPlayer from './SoundPlayer';
-import useID from './hooks/useID';
 import { WebAudioContext } from './context/WebAudioContext';
 import { updater } from './SoundPlayerActions';
 import { DispatchContext } from './context/Store';
 
 const SoundPlayerLoader = () => {
-   const id = useID();
+   const id = useId();
    const [url, setFileUrl] = useState(null);
    const audioContext = useContext(WebAudioContext);
    const dispatch = useContext(DispatchContext);

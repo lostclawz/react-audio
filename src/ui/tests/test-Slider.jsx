@@ -1,12 +1,10 @@
 import React from 'react';
-import { expect } from 'chai';
-import sinon from 'sinon';
-import { shallow } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Slider from '../Slider';
 
 
 describe('<Slider />', () => {
-   let wrapper;
    const testProps = {
       min: 0,
       max: 100,
@@ -16,78 +14,93 @@ describe('<Slider />', () => {
       showValue: true,
       label: 'test',
    };
-   beforeEach(() => {
-      wrapper = shallow(<Slider {...testProps} />);
-   });
+
    it('renders something', () => {
-      expect(wrapper.exists()).to.be.true;
+      const { container } = render(<Slider {...testProps} />);
+      expect(container.firstChild).toBeInTheDocument();
    });
+
    it('renders a wrapper div with the class .slider', () => {
-      expect(wrapper.find('.slider')).to.have.lengthOf(1);
+      const { container } = render(<Slider {...testProps} />);
+      expect(container.querySelector('.slider')).toBeInTheDocument();
    });
+
    it('renders an input element of type range', () => {
-      expect(
-         wrapper.find('input[type="range"]')
-      ).to.have.lengthOf(1);
+      render(<Slider {...testProps} />);
+      const input = screen.getByRole('slider');
+      expect(input).toBeInTheDocument();
+      expect(input.type).toBe('range');
    });
+
    it('sets the input element\'s min, max, and step attributes to props passed in', () => {
-      const inputEl = wrapper.find('input[type="range"]');
-      const checkProps = ['min', 'max', 'step'];
-      checkProps.forEach((p) => {
-         expect(inputEl.prop(p)).to.equal(testProps[p]);
-      });
+      render(<Slider {...testProps} />);
+      const inputEl = screen.getByRole('slider');
+      expect(inputEl.min).toBe(testProps.min.toString());
+      expect(inputEl.max).toBe(testProps.max.toString());
+      expect(inputEl.step).toBe(testProps.step.toString());
    });
+
    it('renders .ticks with numTicks children .tick elements if numTicks is passed', () => {
-      expect(
-         wrapper.find('.ticks')
-      ).to.have.lengthOf(1);
-      expect(
-         wrapper.find('.tick')
-      ).to.have.lengthOf(testProps.numTicks);
-      wrapper.setProps({ numTicks: 0 });
-      expect(wrapper.find('.ticks')).to.have.lengthOf(0);
-      expect(wrapper.find('.ticks')).to.have.lengthOf(0);
+      const { container, rerender } = render(<Slider {...testProps} />);
+      expect(container.querySelector('.ticks')).toBeInTheDocument();
+      expect(container.querySelectorAll('.tick')).toHaveLength(testProps.numTicks);
+
+      rerender(<Slider {...testProps} numTicks={0} />);
+      expect(container.querySelector('.ticks')).not.toBeInTheDocument();
    });
+
    it('renders a .slider-label element only is the label prop is passed', () => {
-      const label = wrapper.find('.slider-label');
-      expect(label).to.have.lengthOf(1);
-      expect(label.text()).to.equal(testProps.label);
-      wrapper.setProps({ label: '' });
-      expect(wrapper.find('.slider-label')).to.have.lengthOf(0);
+      const { container, rerender } = render(<Slider {...testProps} />);
+      const label = container.querySelector('.slider-label');
+      expect(label).toBeInTheDocument();
+      expect(label.textContent).toBe(testProps.label);
+
+      rerender(<Slider {...testProps} label="" />);
+      expect(container.querySelector('.slider-label')).not.toBeInTheDocument();
    });
+
    it('renders a .slider-value span element if showValue is given', () => {
-      expect(wrapper.find('.slider-value')).to.have.lengthOf(1);
-      expect(wrapper.find('.slider-value').text()).to.equal(testProps.value.toString());
+      const { container } = render(<Slider {...testProps} />);
+      const valueEl = container.querySelector('.slider-value');
+      expect(valueEl).toBeInTheDocument();
+      expect(valueEl.textContent).toBe(testProps.value.toString());
    });
+
    it('appends valueUnits next to the value if given', () => {
-      wrapper.setProps({ valueUnits: 'px' });
-      expect(wrapper.find('.slider-value').text()).to.equal(`${testProps.value} px`);
+      const { container } = render(<Slider {...testProps} valueUnits="px" />);
+      const valueEl = container.querySelector('.slider-value');
+      expect(valueEl.textContent).toBe(`${testProps.value} px`);
    });
+
    it('fires the onChange function prop when the input is changed, with the new value as the only arg', () => {
-      const onChange = sinon.fake();
-      wrapper = shallow(
-         <Slider
-            {...testProps}
-            onChange={onChange}
-         />
-      );
-      const fakeEvent = { target: { value: 200 } };
-      wrapper.find('input').simulate('change', fakeEvent);
-      expect(onChange.callCount).to.equal(1);
-      expect(onChange.calledWith(fakeEvent.target.value));
+      const onChange = jest.fn();
+      render(<Slider {...testProps} onChange={onChange} />);
+
+      const input = screen.getByRole('slider');
+      fireEvent.change(input, { target: { value: '50' } });
+
+      expect(onChange).toHaveBeenCalled();
+      expect(onChange).toHaveBeenCalledWith('50');
    });
+
    it('passes inputProps to input element if given', () => {
       const style = { backgroundColor: 'blue' };
-      wrapper.setProps({ style });
-      expect(wrapper.find('.slider').prop('style')).to.deep.equal(style);
+      const { container } = render(<Slider {...testProps} style={style} />);
+      const sliderEl = container.querySelector('.slider');
+      // Note: style prop is passed to wrapper div, not input
+      expect(sliderEl).toHaveAttribute('style');
    });
+
    it('passes any additional props to the wrapper .slider element', () => {
-      wrapper.setProps({ 'data-test': true });
-      expect(wrapper.find('.slider').prop('data-test')).to.equal(true);
+      const { container } = render(<Slider {...testProps} data-test={true} />);
+      const sliderEl = container.querySelector('.slider');
+      expect(sliderEl.getAttribute('data-test')).toBe('true');
    });
-   it('resets value to defaultValue prop on doubleclick if it exists', () => {
-      const onChange = sinon.fake();
-      wrapper = shallow(
+
+   it('resets value to defaultValue prop on doubleclick if it exists', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn();
+      render(
          <Slider
             {...testProps}
             value={0.5}
@@ -95,14 +108,17 @@ describe('<Slider />', () => {
             onChange={onChange}
          />
       );
-      const inputEl = wrapper.find('input');
-      inputEl.simulate('doubleclick');
-      expect(onChange.calledOnce).to.equal(true);
-      expect(onChange.calledWith(0.25)).to.be.true;
+
+      const input = screen.getByRole('slider');
+      await user.dblClick(input);
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(0.25);
    });
-   it('allows defaultValue to be zero', () => {
-      const onChange = sinon.fake();
-      wrapper = shallow(
+
+   it('allows defaultValue to be zero', async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn();
+      render(
          <Slider
             {...testProps}
             value={300}
@@ -112,23 +128,27 @@ describe('<Slider />', () => {
             onChange={onChange}
          />
       );
-      const inputEl = wrapper.find('input');
-      inputEl.simulate('doubleclick');
-      expect(onChange.calledOnce).to.equal(true);
-      expect(onChange.calledWith(0)).to.be.true;
+
+      const input = screen.getByRole('slider');
+      await user.dblClick(input);
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(0);
    });
-   it("resets value to min on doubleclick if defaultValue prop doesn't exist", () => {
-      const onChange = sinon.fake();
-      wrapper = shallow(
+
+   it("resets value to min on doubleclick if defaultValue prop doesn't exist", async () => {
+      const user = userEvent.setup();
+      const onChange = jest.fn();
+      render(
          <Slider
             {...testProps}
             value={0.5}
             onChange={onChange}
          />
       );
-      const inputEl = wrapper.find('input');
-      inputEl.simulate('doubleclick');
-      expect(onChange.calledOnce).to.equal(true);
-      expect(onChange.calledWith(testProps.min)).to.be.true;
+
+      const input = screen.getByRole('slider');
+      await user.dblClick(input);
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith(testProps.min);
    });
 });

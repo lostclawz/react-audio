@@ -1,33 +1,15 @@
 import React from 'react';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
-
-import { mount } from 'enzyme';
-import sinon from 'sinon';
+import { render } from '@testing-library/react';
 import * as audioUtils from '../utils/web-audio-utils';
 import SoundPlayer from '../SoundPlayer';
 
-chai.use(chaiAsPromised);
-const { expect } = chai;
-
 const mockAudioContext = () => ({
-   createBufferSource: sinon.fake(),
-   createGain: sinon.fake(),
+   createBufferSource: jest.fn(),
+   createGain: jest.fn(),
    destination: {},
 });
 
-const restoreContext = (ctx) => {
-   Object.values(ctx)
-      .forEach((v) => {
-         if (typeof v.restore === 'function') {
-            v.restore();
-         }
-      });
-   return ctx;
-};
-
 describe('<SoundPlayer/>', () => {
-   // stubbed functions
    let loadSoundIntoBuffer;
    let updateCallback;
    let mockContext;
@@ -35,43 +17,53 @@ describe('<SoundPlayer/>', () => {
    const goodUrl = '/localhost:8080/whatever.mp3';
    const badUrl = '/localhost:8080/whatever2.mp3';
 
-   let wrapper;
    const testBuffer = {
       duration: 1000,
    };
 
    beforeEach(() => {
       mockContext = mockAudioContext();
-      loadSoundIntoBuffer = sinon.stub(audioUtils, 'loadSoundIntoBuffer');
-      loadSoundIntoBuffer.withArgs(goodUrl, mockContext).resolves(testBuffer);
-      loadSoundIntoBuffer.withArgs(badUrl, mockContext).rejects(new Error('Bad URL'));
+      loadSoundIntoBuffer = jest.spyOn(audioUtils, 'loadSoundIntoBuffer');
+      loadSoundIntoBuffer.mockImplementation((url) => {
+         if (url === goodUrl) {
+            return Promise.resolve(testBuffer);
+         }
+         if (url === badUrl) {
+            return Promise.reject(new Error('Bad URL'));
+         }
+         return Promise.reject(new Error('Unknown URL'));
+      });
 
-      // const objKey = 'playlist';
-      updateCallback = () => sinon.fake();
+      updateCallback = jest.fn();
+   });
 
-      wrapper = mount(
+   afterEach(() => {
+      loadSoundIntoBuffer.mockRestore();
+      jest.clearAllMocks();
+   });
+
+   it('renders', () => {
+      const { container } = render(
          <SoundPlayer
             url={goodUrl}
             update={updateCallback}
             audioContext={mockContext}
          />
       );
+      expect(container.firstChild).toBeInTheDocument();
    });
-   afterEach(() => {
-      loadSoundIntoBuffer.restore();
-      restoreContext(mockContext);
-   });
-   it('renders', () => {
-      expect(wrapper.exists()).to.be.true;
-   });
+
    it('calls loadSoundIntoBuffer with the URL and audioContext on mount', () => {
-      expect(loadSoundIntoBuffer.calledOnce).to.be.true;
+      render(
+         <SoundPlayer
+            url={goodUrl}
+            update={updateCallback}
+            audioContext={mockContext}
+         />
+      );
+      expect(loadSoundIntoBuffer).toHaveBeenCalledTimes(1);
+      expect(loadSoundIntoBuffer).toHaveBeenCalledWith(goodUrl, mockContext);
    });
-   it('adds a disabled class to div wrapper if url won\'t load');
-   // , (done) => {
-   //    wrapper.setProps({ url: badUrl });
-   //    const promise = loadSoundIntoBuffer.lastCall.returnValue;
-   //    expect(promise instanceof Promise).to.be.true;
-   //    promise.should.be.rejected.and.notify(done);
-   // });
+
+   it.todo('adds a disabled class to div wrapper if url won\'t load');
 });

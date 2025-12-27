@@ -1,11 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useId } from 'react';
 // import { paramReducer, initState } from './SoundPlayerReducers';
 // import { initState } from './SoundPlayerLens';
 import { updater } from './SoundPlayerActions';
 import SoundPlayer from './SoundPlayer';
 import { soundPlayerSelector } from './SoundPlayerLens';
 import { StateContext, DispatchContext } from '~/context/Store';
-import useID from './hooks/useID';
 import { WebAudioContext } from './context/WebAudioContext';
 
 
@@ -20,7 +19,7 @@ export const SoundPlayerContainer = ({ loopOn, ...props }) => {
    const audioContext = useContext(WebAudioContext);
 
    // id of component instance
-   const id = useID();
+   const id = useId();
 
    // generic param updater
    const update = updater(id)(dispatch);

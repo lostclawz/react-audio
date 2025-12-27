@@ -1,5 +1,3 @@
-
-import { expect } from 'chai';
 import { updateParam, removePlayer } from '../SoundPlayerActions';
 import soundPlayerReducer from '../SoundPlayerReducer';
 import { initState } from '../SoundPlayerLens';
@@ -11,7 +9,7 @@ describe('soundPlayerReducer', () => {
       const action = updateParam(id, 'loop', true);
       expect(
          soundPlayerReducer(currentState, action)
-      ).to.deep.equal({
+      ).toEqual({
          [id]: {
             ...initState,
             loop: true,
@@ -22,15 +20,15 @@ describe('soundPlayerReducer', () => {
       const id = 'test';
       const action = updateParam(id, 'loop', true);
       let next = soundPlayerReducer({}, action);
-      expect(next[id].loop).to.equal(true);
+      expect(next[id].loop).toBe(true);
       const nextAction = updateParam(id, { loop: false });
       next = soundPlayerReducer(next, nextAction);
-      expect(next[id].loop).to.equal(false);
+      expect(next[id].loop).toBe(false);
    });
    it('handles REMOVE_PLAYER action', () => {
       const id = 'test';
       const action = removePlayer(id);
       const next = soundPlayerReducer({ [id]: 'something' }, action);
-      expect(next[id]).to.be.undefined;
+      expect(next[id]).toBeUndefined();
    });
 });

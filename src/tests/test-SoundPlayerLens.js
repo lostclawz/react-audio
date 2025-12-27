@@ -1,5 +1,3 @@
-
-import { expect } from 'chai';
 import {
    initState, defaultToInit, soundPlayerSelector, removeById
 } from '../SoundPlayerLens';
@@ -9,7 +7,7 @@ describe('soundPlayerSelector', () => {
    it('returns initState if id not found', () => {
       expect(
          soundPlayerSelector('test')({})
-      ).to.deep.equal(initState);
+      ).toEqual(initState);
    });
    it('returns the state object for the ID if it is found', () => {
       const testState = { ...initState, loop: true };
@@ -19,7 +17,7 @@ describe('soundPlayerSelector', () => {
                test: testState,
             },
          })
-      ).to.deep.equal(testState);
+      ).toEqual(testState);
    });
 });
 
@@ -27,7 +25,7 @@ describe('defaultToInit()', () => {
    it('if argument is empty, returns initState', () => {
       expect(
          defaultToInit(null)
-      ).to.deep.equal(initState);
+      ).toEqual(initState);
    });
 });
 
@@ -37,8 +35,8 @@ describe('removeById(id)(state)', () => {
       const state = {
          id: 'something',
       };
-      expect(state).to.have.property(id);
+      expect(state).toHaveProperty(id);
       const omitId = removeById(id);
-      expect(omitId(state)).to.not.have.property(id);
+      expect(omitId(state)).not.toHaveProperty(id);
    });
 });

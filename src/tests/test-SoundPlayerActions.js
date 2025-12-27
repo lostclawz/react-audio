@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
    UPDATE_PARAM, updater, removePlayer, REMOVE_PLAYER, updateParam
 } from '../SoundPlayerActions';
@@ -13,21 +11,21 @@ describe('SoundPlayerActions', () => {
          const param = 'title';
          const value = 'whatever';
 
-         const dispatch = sinon.fake();
+         const dispatch = jest.fn();
          const u = updater(id);
-         expect(u).to.be.a('function');
+         expect(typeof u).toBe('function');
          const dispatchUpdate = u(dispatch);
          const titleUpdate = dispatchUpdate(param);
-         expect(titleUpdate).to.be.a('function');
-         expect(dispatch.notCalled).to.be.true;
+         expect(typeof titleUpdate).toBe('function');
+         expect(dispatch).not.toHaveBeenCalled();
          titleUpdate(value);
-         expect(dispatch.calledOnce).to.be.true;
-         expect(dispatch.calledWith({
+         expect(dispatch).toHaveBeenCalledTimes(1);
+         expect(dispatch).toHaveBeenCalledWith({
             type: actionType,
             instanceId: id,
             param,
             value,
-         })).to.be.true;
+         });
       });
    });
 

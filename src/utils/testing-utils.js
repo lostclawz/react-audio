@@ -1,6 +1,3 @@
-import { expect } from 'chai';
-
-
 /**
  * Runs a basic test on a simple action creator, whether the action has
  * the correct action type and whether the data is sent with it.
@@ -21,16 +18,16 @@ export function testActionCreator(
       : actionCreator(actionVal);
 
    // check action type
-   expect(action).to.have.property('type', actionType);
+   expect(action).toHaveProperty('type', actionType);
 
    // check other properties
    if (Array.isArray(actionKey)) {
       actionKey.forEach((k, idx) => {
-         expect(action).to.have.property(k, actionVal[idx]);
+         expect(action).toHaveProperty(k, actionVal[idx]);
       });
    }
    else if (actionKey) {
-      expect(action).to.have.property(actionKey, actionVal);
+      expect(action).toHaveProperty(actionKey, actionVal);
    }
 }
 
@@ -54,7 +51,7 @@ export function basicActionTest(
       });
    });
    it(`includes a ${actionType} action type constant`, () => {
-      expect(actionType).to.be.a('string');
-      expect(actionType).to.not.equal('');
+      expect(typeof actionType).toBe('string');
+      expect(actionType).not.toBe('');
    });
 }
