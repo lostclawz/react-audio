@@ -32,7 +32,7 @@ export const soundPlayerUpdater = (id, param, value) => state => (
       obj => (
          typeof param === 'object'
             // if an object is passed, just merge
-            ? R.merge(defaultToInit(obj), param)
+            ? R.mergeRight(defaultToInit(obj), param)
             // otherwise set the key
             : R.assoc(param, value, defaultToInit(obj))
       ),
