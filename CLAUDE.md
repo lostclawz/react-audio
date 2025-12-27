@@ -11,11 +11,19 @@
 
 ## Core Technologies
 
-- **React** (^16.13.1) - UI framework
+- **React** (^19.2.3) - UI framework
 - **Web Audio API** - Browser's native audio processing
 - **Redux** - State management (via reducer pattern)
-- **Ramda** (^0.26.1) - Functional programming with lenses for immutable state updates
+- **Ramda** (^0.32.0) - Functional programming with lenses for immutable state updates
 - **SCSS** - Component styling
+
+## Development Tools
+
+- **Jest** (^30.2.0) - Test runner and framework
+- **React Testing Library** (^16.3.1) - Component testing utilities
+- **@testing-library/user-event** (^14.6.1) - User interaction simulation
+- **@testing-library/jest-dom** (^6.9.1) - Custom Jest matchers
+- **Babel** - JavaScript transpilation for tests
 
 ## Architecture Patterns
 
@@ -106,9 +114,40 @@ The project uses a **hybrid approach**:
 
 ### Testing
 
-- **Framework**: Mocha + Chai + Enzyme + Sinon
-- **Test location**: [src/tests/](src/tests/) for integration, [src/ui/tests/](src/ui/tests/) for UI components
-- **Current status**: Test infrastructure exists but test runner not fully configured
+- **Framework**: Jest + React Testing Library
+- **Test Runner**: Jest with jsdom environment
+- **Utilities**: @testing-library/user-event for user interactions
+- **Test location**: [src/tests/](src/tests/) for core components, [src/ui/tests/](src/ui/tests/) for UI components
+- **Coverage**: 106 tests across 14 test suites - all passing
+- **Run tests**: `npm test` (single run), `npm run test:watch` (watch mode), `npm run test:coverage` (with coverage)
+
+#### Test Files
+
+| File | Coverage |
+|------|----------|
+| [test-SoundPlayer.jsx](src/tests/test-SoundPlayer.jsx) | Core player functionality (22 tests) |
+| [test-SoundPlayerContainer.jsx](src/tests/test-SoundPlayerContainer.jsx) | Redux integration (8 tests) |
+| [test-SoundPlayerLoader.jsx](src/tests/test-SoundPlayerLoader.jsx) | File upload + player (10 tests) |
+| [test-SoundLoader.jsx](src/tests/test-SoundLoader.jsx) | File upload only (6 tests) |
+| [test-SoundDuration.jsx](src/tests/test-SoundDuration.jsx) | Duration display (4 tests) |
+| [test-WebAudioContext.jsx](src/tests/test-WebAudioContext.jsx) | Context provider (7 tests) |
+| [test-web-audio-utils.js](src/tests/test-web-audio-utils.js) | Web Audio utilities (8 tests) |
+| [test-redux-utils.js](src/tests/test-redux-utils.js) | Redux helpers (6 tests) |
+| [test-SoundPlayerActions.js](src/tests/test-SoundPlayerActions.js) | Action creators (3 tests) |
+| [test-SoundPlayerReducer.js](src/tests/test-SoundPlayerReducer.js) | State reducer (3 tests) |
+| [test-SoundPlayerLens.js](src/tests/test-SoundPlayerLens.js) | Ramda lenses (3 tests) |
+| [test-Button.jsx](src/ui/tests/test-Button.jsx) | Button component (6 tests) |
+| [test-Toggle.jsx](src/ui/tests/test-Toggle.jsx) | Toggle component (4 tests) |
+| [test-Slider.jsx](src/ui/tests/test-Slider.jsx) | Slider component (16 tests) |
+
+#### Writing Tests
+
+When adding new features:
+1. Create test file with `test-` prefix matching component name
+2. Use React Testing Library's `render`, `screen`, and `userEvent`
+3. Mock Web Audio API components (AudioContext, BufferSource, etc.)
+4. Test user interactions, not implementation details
+5. Use `waitFor` or `findBy*` for async operations
 
 ## Important Concepts
 
@@ -146,8 +185,11 @@ Loop functionality allows:
 - Version 0.0.1 - early development stage
 - No build/bundling configured (Webpack, Rollup, etc.)
 - SCSS compilation not set up
-- Test runner needs configuration
 - No published npm package yet
+
+## Known Issues
+
+- **isPlayableAudioFile() bug**: `AUDIO_CONTENT_TYPES` in [constants.js](src/constants.js) is defined as an array but accessed as an object in [web-audio-utils.js](src/utils/web-audio-utils.js:45), causing the function to always return `false`
 
 ## File Naming Conventions
 
